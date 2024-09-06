@@ -1,57 +1,64 @@
 // Se piden los datos del usuario
 let usuario = prompt("Bienvenido, ingrese su nombre");
-let plata = parseFloat(prompt("Ingrese su capital de dinero en dólares")); // Convertir a número
-alert("Bienvenido " + usuario + ", su capital es de " + plata + " dólares. A continuación, se le mostrarán los autos en función de su capital disponible.");
-let auto = 0;
-let salto = false
+let plata = parseFloat(prompt("Ingrese su capital de dinero en dólares"));
+const modelos = [
+    { make: "Ford", model: "Ka", price: 350 },
+    { make: "Fiat", model: "Palio", price: 500 },
+    { make: "Renault", model: "Clio", price: 700 },
+    { make: "Citroen", model: "C3", price: 950 }
+];
+// Verificar que el capital ingresado sea un número válido
 
-function menuauto() { 
-    // Verificar si plata está en el rango de 350 a 700
-    if (plata > 350 && plata < 701) {
-        let autoelegido = parseInt(prompt("Debido a su capital se le ofrecen los siguientes vehículos:\n1. Ford Ka(350 USD)\n2. Fiat Palio(500 USD)\n3. Renault Clio(700 USD)\n4. Volver al menú"));
-        if (autoelegido === 1) {
-            auto = 350;
-        } else if (autoelegido === 2) {
-            auto = 500;
-        } else if (autoelegido === 3) {
-            auto = 700;
-        } else if (autoelegido === 4 || isNaN(autoelegido)) {
-            alert("Volverás al menú");
-            salto = true
-        }  
-            
-        } else { (plata <350)
-            alert("Su capital no es suficiente");
-            salto = true}
-             }
-         
-      
-
-function transferencia() { 
-    while (plata >350) { 
-// Se calcula el valor de la transferencia del auto
-let opcion = prompt("¿Desea calcular la transferencia?\n1. Sí\n2. No");
-if (opcion === "1") {
-    let impuesto = auto * 0.05; // Calcula el 5% del valor del auto
-    impuesto = Math.round(impuesto);
-    alert("El valor de la transferencia sería de " + impuesto + " dólares.");
+if (isNaN(plata) || plata <= 0) {
+    alert("El capital ingresado no es válido.");
 } else {
-    alert("No se calculara el impuesto.");
+alert("Bienvenido " + usuario + ", su capital es de " + plata + " dólares. A continuación, se le mostrarán los autos en función de su capital disponible.");
 }
-}
- }
+function menuauto() {
+let autosDisponibles = modelos.filter(auto => auto.price <= plata);
+if (autosDisponibles.length === 0) {
+alert("Su capital no es suficiente para comprar ningun auto.");
+     return null;
+    }
+ let opciones = autosDisponibles.map((auto, index) => `${index + 1}. ${auto.make} ${auto.model} (${auto.price} USD)`).join("\n");
+ opciones += "\n" + (autosDisponibles.length + 1) + ". Salir del menú";
+ let autoElegido = parseInt(prompt("Seleccione un auto:\n" + opciones));
+ if (isNaN(autoElegido) || autoElegido < 1 || autoElegido > autosDisponibles.length + 1) {
+            alert("Opción no valida. Por favor, intente nuevamente");
+            return "no"; // Indica que la opción elegida no es valida
+    }
 
-while (salto) {
-    menuauto() 
-    if (salto === true) { 
-    alert("Su capital no es suficiente")
-   
-         } else (salto === false) 
-         { 
-            transferencia()
-          }
-        
-}
+if (autoElegido === autosDisponibles.length + 1) {
+            return null;
+    }
+let autoSeleccionado = autosDisponibles[autoElegido - 1];
+    return autoSeleccionado;
+    }
+function transferencia(auto) {
+        let opcion = prompt("¿Desea calcular la transferencia?\n1. Sí\n2. No");
+if (opcion === "1") {
+            let impuesto = auto.price * 0.05; // Calcula el 5% del valor del auto
+            impuesto = Math.round(impuesto);
+            alert("El valor de la transferencia sería de " + impuesto + " dólares.");
+    } else if (opcion === "2") {
+            alert("No se calculará el impuesto.");
+    } else {
+            alert("Opción no valida.");
+    }
+    }
+let continuar = true;
 
-menuauto();
-transferencia();
+while (continuar) {
+        let resultado = menuauto();
+        if (resultado === "no") {
+            continue;
+        } else if (resultado) { 
+            transferencia(resultado);
+            continuar = false; 
+        } else {  
+            continuar = false;
+            alert("Gracias por usar nuestro servicio. Nos pondremos en contacto en breve");
+        }
+    }
+
+
