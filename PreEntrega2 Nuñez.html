@@ -1,15 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proyecto final: Concesionaria Los Hermanos Macana</title>
-
-    <b>Valor actual del dolar : 1300 Pesos</b>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #autos { margin-top: 20px; }
+        button { margin-left: 10px; }
+        #mensaje { margin-top: 10px; font-weight: bold; }
+    </style>
 </head>
 <body>
-     <script src="./main.js">
-    
-     </script>
+    <div id="app">
+        <form id="form">
+            <input type="text" id="nombre" placeholder="Ingrese su nombre" required>
+            <input type="number" id="capital" placeholder="Ingrese su capital en dólares" required min="1">
+            <button type="submit">Enviar</button>
+        </form>
+        <div id="mensaje"></div>
+        <div id="autos"></div>
+    </div>
+    <script src="main.js"></script>
 </body>
 </html>
+
