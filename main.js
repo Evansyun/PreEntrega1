@@ -1,64 +1,68 @@
-// Se piden los datos del usuario
-let usuario = prompt("Bienvenido, ingrese su nombre");
-let plata = parseFloat(prompt("Ingrese su capital de dinero en dólares"));
-const modelos = [
-    { make: "Ford", model: "Ka", price: 350 },
-    { make: "Fiat", model: "Palio", price: 500 },
-    { make: "Renault", model: "Clio", price: 700 },
-    { make: "Citroen", model: "C3", price: 950 }
-];
-// Verificar que el capital ingresado sea un número válido
+const modelosJSON = `[
+    {"make": "Ford", "model": "Ka", "price": 350},
+    {"make": "Fiat", "model": "Palio", "price": 500},
+    {"make": "Renault", "model": "Clio", "price": 700},
+    {"make": "Citroen", "model": "C3", "price": 950}
+]`;
 
-if (isNaN(plata) || plata <= 0) {
-    alert("El capital ingresado no es válido.");
-} else {
-alert("Bienvenido " + usuario + ", su capital es de " + plata + " dólares. A continuación, se le mostrarán los autos en función de su capital disponible.");
+const modelos = JSON.parse(modelosJSON);
+const mensajeDiv = document.getElementById('mensaje');
+const autosDiv = document.getElementById('autos');
+
+function mostrarMensaje(mensaje) {
+    mensajeDiv.textContent = mensaje;
 }
-function menuauto() {
-let autosDisponibles = modelos.filter(auto => auto.price <= plata);
-if (autosDisponibles.length === 0) {
-alert("Su capital no es suficiente para comprar ningun auto.");
-     return null;
+function mostrarAutos(autos) {
+    autosDiv.innerHTML = ''; 
+    if (autos.length === 0) {
+        mostrarMensaje("Su capital no es suficiente para comprar ningún auto.");
+        return;
     }
- let opciones = autosDisponibles.map((auto, index) => `${index + 1}. ${auto.make} ${auto.model} (${auto.price} USD)`).join("\n");
- opciones += "\n" + (autosDisponibles.length + 1) + ". Salir del menú";
- let autoElegido = parseInt(prompt("Seleccione un auto:\n" + opciones));
- if (isNaN(autoElegido) || autoElegido < 1 || autoElegido > autosDisponibles.length + 1) {
-            alert("Opción no valida. Por favor, intente nuevamente");
-            return "no"; // Indica que la opción elegida no es valida
-    }
-
-if (autoElegido === autosDisponibles.length + 1) {
-            return null;
-    }
-let autoSeleccionado = autosDisponibles[autoElegido - 1];
-    return autoSeleccionado;
-    }
+    autos.forEach(auto => {
+        const autoDiv = crearElementoAuto(auto);
+        autosDiv.appendChild(autoDiv);
+    });
+}
+function crearElementoAuto(auto) {
+    const autoDiv = document.createElement('div');
+    autoDiv.textContent = `${auto.make} ${auto.model} (${auto.price} USD)`;
+    
+    const botonCompra = document.createElement('button');
+    botonCompra.textContent = "Comprar";
+    botonCompra.onclick = () => transferencia(auto);
+    
+    autoDiv.appendChild(botonCompra);
+    return autoDiv;
+}
 function transferencia(auto) {
-        let opcion = prompt("¿Desea calcular la transferencia?\n1. Sí\n2. No");
-if (opcion === "1") {
-            let impuesto = auto.price * 0.05; // Calcula el 5% del valor del auto
-            impuesto = Math.round(impuesto);
-            alert("El valor de la transferencia sería de " + impuesto + " dólares.");
-    } else if (opcion === "2") {
-            alert("No se calculará el impuesto.");
+    const opcion = prompt("¿Desea calcular la transferencia?\n1. Sí\n2. No");
+    switch (opcion) {
+        case "1":
+            calcularImpuesto(auto.price);
+            break;
+        case "2":
+            mostrarMensaje("No se calculará el impuesto.");
+            break;
+        default:
+            mostrarMensaje("Opción no válida.");
+    }
+}
+
+function calcularImpuesto(precio) {
+    const impuesto = Math.round(precio * 0.05);
+    mostrarMensaje(`El valor de la transferencia sería de ${impuesto} dólares.`);
+}
+document.getElementById('form').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+    const usuario = document.getElementById('nombre').value;
+    const plata = parseFloat(document.getElementById('capital').value);
+    
+    if (isNaN(plata) || plata <= 0) {
+        mostrarMensaje("El capital ingresado no es válido.");
     } else {
-            alert("Opción no valida.");
+        mostrarMensaje(`Bienvenido ${usuario}, su capital es de ${plata} dólares.`);
+        const autosDisponibles = modelos.filter(auto => auto.price <= plata);
+        mostrarAutos(autosDisponibles);
     }
-    }
-let continuar = true;
-
-while (continuar) {
-        let resultado = menuauto();
-        if (resultado === "no") {
-            continue;
-        } else if (resultado) { 
-            transferencia(resultado);
-            continuar = false; 
-        } else {  
-            continuar = false;
-            alert("Gracias por usar nuestro servicio. Nos pondremos en contacto en breve");
-        }
-    }
-
+});
 
